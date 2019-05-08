@@ -7,6 +7,9 @@ const JUMP_HEIGHT = -375
 const DASH_SPEED = 225
 const SWORDATTACK = preload("res://SwordAttack.tscn")
 
+
+export(int) var lifePoints = 10
+var hitPoints = 0
 var isDead = false
 var SLIDE_SPEED = 200
 var motion = Vector2()
@@ -14,7 +17,6 @@ var DashCount = 0
 var InAir = 0
 var slideBool = false
 var AtkAllowed = true
-
 var direction = 1
 
 func hitBoxColl():
@@ -32,7 +34,6 @@ func hitBoxColl():
 	AtkAllowed = false
 	
 
-
 	
 func Attack():
 
@@ -45,6 +46,8 @@ func Attack():
 				$Attack.disabled = true
 				$CollisionShape2D/PlayerChar.hide()
 				$Slide/PlayerChar.hide()
+				
+
 func leftRightAtk():
 	var swordAtk = SWORDATTACK.instance()
 	get_parent().add_child(swordAtk)
@@ -74,13 +77,20 @@ func setStartValues():
 	#Player is not Sliding
 	slideBool = false
 
+
 func charDead():
-	if isDead:
-		motion = Vector2(0,0)
-		$CollisionShape2D/PlayerChar.play("Dead")
-		$CollisionShape2D.disabled = true
-		$Timer.start()
-		
+	hitPoints +=1
+	if hitPoints == 10:
+		hitPoints = 0
+		lifePoints -=1
+		print(lifePoints)
+		if lifePoints == 0:
+			isDead = true
+			if isDead:
+				motion = Vector2(0,0)
+				$CollisionShape2D/PlayerChar.play("Dead")
+				$CollisionShape2D.disabled = true
+				$Timer.start()
 		
 
 func movementCharRight(InAir):
@@ -116,11 +126,11 @@ func movementCharLeft(InAir):
 			$CollisionShape2D/PlayerChar.play("Run")
 
 func _physics_process(delta):
+	get_node("Label").set_text(str(lifePoints))
 	motion.y += GRAVITY
 	setStartValues()
-	
 	var friction = false
-	if isDead == false:
+	if !isDead:
 		Attack()
 		
 		if Input.is_action_pressed("ui_right"):
@@ -176,17 +186,13 @@ func _physics_process(delta):
 				
 				
 		motion = move_and_slide(motion,UP)
+	
 		
 		if get_slide_count() > 0:
 			for i in range(get_slide_count()):
 				if "Enemy" in get_slide_collision(i).collider.name:
-					isDead = true
 					charDead()
-	
 
-	
-	
-
-
+		
 func _on_Timer_timeout():
 	get_tree().change_scene("TitleScreen.tscn")

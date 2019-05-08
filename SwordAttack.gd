@@ -7,9 +7,9 @@ func attackUsed():
 
 
 func swordAttackRight():
-	$CollisionShape2D.position.x = 16
+	$CollisionShape2D.position.x = 27
 func swordAttackLeft():
-	$CollisionShape2D.position.x = -16
+	$CollisionShape2D.position.x = -27
 
 func _physics_process(delta):
 	attackUsed()
