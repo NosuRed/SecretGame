@@ -43,51 +43,32 @@ func attackAnimation():
 		$Slide/PlayerChar.hide()
 
 func Attack():
+
 	if Input.is_action_pressed("ui_cancel"):
 		if $Attack/Attack.get_frame() != 5 && $Attack/Attack.get_frame() != 0 && $Attack/Attack.get_frame() != 1:
 			leftRightAtk()
 			attackAnimation()
 			
+var displayDeathHP= "HP: 0"
 
-var AttackRightXPos = 16
-var AttackAttacRightkXPos = -15
-var directionAttack = false
 
-func swordAtkDirection():
-	$Attack/Attack.flip_h = directionAttack
-	$Attack.position.x = AttackRightXPos
-	$Attack/Attack.position.x = AttackAttacRightkXPos
-	
 func leftRightAtk():
 	var swordAtk = SWORDATTACK.instance()
 	get_parent().add_child(swordAtk)
 	swordAtk.position = $Position2D.global_position
 	if direction == 1:
 		swordAtk.swordAttackRight()
-		directionAttack = false
-		swordAtkDirection()
-		AttackRightXPos = 16
-		AttackAttacRightkXPos = -15
-		
-		#$Attack/Attack.flip_h = false
-		#$Attack.position.x = 16
-		#$Attack/Attack.position.x = -15
+		$Attack/Attack.flip_h = false
+		$Attack.position.x = 16
+		$Attack/Attack.position.x = -15
 	else:
 		swordAtk.swordAttackLeft()
-		directionAttack = true
-		swordAtkDirection()
-		AttackRightXPos = -16
-		AttackAttacRightkXPos = 15
-		
-		
-		
-		#$Attack/Attack.flip_h = true
-		#$Attack.position.x = -16
-		#$Attack/Attack.position.x = 15
+		$Attack/Attack.flip_h = true
+		$Attack.position.x = -16
+		$Attack/Attack.position.x = 15
 func setStartValues():
 	$Attack/Attack.hide()
 	$Attack.disabled = true
-	
 	#Hides the Slide Sprot
 	$Slide/PlayerChar.hide()
 	#Turns on the Player Sprite that is not sliding
@@ -100,18 +81,18 @@ func setStartValues():
 	slideBool = false
 
 
-func playerHP():
+func playerHP(damage):
 	hitPoints +=1
-	if hitPoints == 10:
-		hitPoints = 0
-		lifePoints -=1
-		print(lifePoints)
-		if lifePoints == 0:
-			isDead = true
-			playerDeath()
+	#if hitPoints >= 10:
+	hitPoints = 0
+	lifePoints -=damage
+	if hpLb.get_text() == displayDeathHP:
+		lifePoints = 0
+		$CollisionShape2D.disabled = true
+		playerDeath()
 
 func playerDeath():
-	if isDead:
+		isDead = true
 		motion = Vector2(0,0)
 		$CollisionShape2D/PlayerChar.play("Dead")
 		$CollisionShape2D.disabled = true
@@ -153,7 +134,7 @@ func player_Hp_UpDate():
 	if lifePoints >= -1:
 		hpLb.set_text("HP: " + str(lifePoints))
 	else:
-		hpLb.set_text("0")
+		hpLb.set_text(displayDeathHP)
 
 func _physics_process(delta):
 	player_Hp_UpDate()
@@ -196,15 +177,19 @@ func _physics_process(delta):
 				
 			if !InAir:
 				doubleJump()
-			
-		motion = move_and_slide(motion,UP)
+	else:
+		$CollisionShape2D.disabled = true
+		motion.y = 0
+		
+	motion = move_and_slide(motion,UP)
 	
-		if get_slide_count() > 0:
+	if get_slide_count() > 0:
 			checkPlEnemyCol()
-
 		
 func _on_Timer_timeout():
 	get_tree().change_scene("TitleScreen.tscn")
+	
+
 func doubleJump():
 	if Input.is_action_just_pressed("ui_up"):
 					if doubleJump:
@@ -231,6 +216,12 @@ func dashPlayer():
 func checkPlEnemyCol():
 	for i in range(get_slide_count()):
 				if "Enemy" in get_slide_collision(i).collider.name:
-					playerHP()
+					#motion.y = JUMP_HEIGHT
+					#motion.x = 150
+					playerHP(0)
 
+func bounceback():
+	if !isDead:
+		motion.y = JUMP_HEIGHT
+		motion.x = MAX_SPEED
 

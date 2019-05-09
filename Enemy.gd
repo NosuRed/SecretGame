@@ -6,17 +6,20 @@ const FLOOR = Vector2(0,-1)
 var velocity = Vector2()
 export(int) var max_speed = 75
 export(int) var lifePoints = 1
+export(int) var damageDone = 1
 var direction = -1
 var hitCounter = 0
 var isDead = false
 
 func enemyDeath():
 		isDead = true
+		$CollisionShape2D2.disabled = true
 		velocity = Vector2(0,0)
 		$AnimatedSprite.play("dead")
 		$Timer.start()
 	
 func enemyHP():
+	direction *= direction
 	hitCounter +=1
 	if hitCounter >= 15:
 		hitCounter = 0
@@ -57,4 +60,6 @@ func _on_Timer_timeout():
 func enemyColWithPlayer():
 	for i in range (get_slide_count()):
 			if "Player" in get_slide_collision(i).collider.name:
-				get_slide_collision(i).collider.playerHP()
+				get_slide_collision(i).collider.playerHP(damageDone)
+				get_slide_collision(i).collider.bounceback()
+				
