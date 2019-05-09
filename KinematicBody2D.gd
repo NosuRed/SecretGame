@@ -35,16 +35,20 @@ func hitBoxColl():
 	#to check if the Player is sliding
 	slideBool = true
 
+func attackAnimation():
+		$Attack/Attack.show()
+		$Attack/Attack.play("default")
+		$Attack.disabled = true
+		$CollisionShape2D/PlayerChar.hide()
+		$Slide/PlayerChar.hide()
+
 func Attack():
 
 	if Input.is_action_pressed("ui_cancel"):
 		if $Attack/Attack.get_frame() != 5 && $Attack/Attack.get_frame() != 0 && $Attack/Attack.get_frame() != 1:
 			leftRightAtk()
-			$Attack/Attack.show()
-			$Attack/Attack.play("default")
-			$Attack.disabled = true
-			$CollisionShape2D/PlayerChar.hide()
-			$Slide/PlayerChar.hide()
+			attackAnimation()
+			
 
 func leftRightAtk():
 	var swordAtk = SWORDATTACK.instance()
