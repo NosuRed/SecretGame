@@ -10,17 +10,20 @@ var direction = -1
 var hitCounter = 0
 var isDead = false
 
-
-func dead():
+func enemyDeath():
+		isDead = true
+		velocity = Vector2(0,0)
+		$AnimatedSprite.play("dead")
+		$Timer.start()
+	
+func enemyHP():
 	hitCounter +=1
 	if hitCounter >= 15:
 		hitCounter = 0
 		lifePoints -=1
 	if lifePoints <= 0:
-		isDead = true
-		velocity = Vector2(0,0)
-		$AnimatedSprite.play("dead")
-		$Timer.start()
+		enemyDeath()
+		
 	
 func _physics_process(delta):
 	if not isDead:
@@ -41,14 +44,17 @@ func _physics_process(delta):
 		direction = direction * -1
 		$RayCast2D.position.x *= -1
 	
-	if $RayCast2D.is_colliding() == false:
+	if !$RayCast2D.is_colliding():
 		direction = direction * -1
 		$RayCast2D.position.x *= -1
 	
 	if get_slide_count() > 0:
-		for i in range (get_slide_count()):
-			if "Player" in get_slide_collision(i).collider.name:
-				get_slide_collision(i).collider.playerHP()
+		enemyColWithPlayer()
 	
 func _on_Timer_timeout():
 	queue_free()
+	
+func enemyColWithPlayer():
+	for i in range (get_slide_count()):
+			if "Player" in get_slide_collision(i).collider.name:
+				get_slide_collision(i).collider.playerHP()

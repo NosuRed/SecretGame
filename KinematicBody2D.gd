@@ -43,27 +43,47 @@ func attackAnimation():
 		$Slide/PlayerChar.hide()
 
 func Attack():
-
 	if Input.is_action_pressed("ui_cancel"):
 		if $Attack/Attack.get_frame() != 5 && $Attack/Attack.get_frame() != 0 && $Attack/Attack.get_frame() != 1:
 			leftRightAtk()
 			attackAnimation()
 			
 
+var AttackRightXPos = 16
+var AttackAttacRightkXPos = -15
+var directionAttack = false
+
+func swordAtkDirection():
+	$Attack/Attack.flip_h = directionAttack
+	$Attack.position.x = AttackRightXPos
+	$Attack/Attack.position.x = AttackAttacRightkXPos
+	
 func leftRightAtk():
 	var swordAtk = SWORDATTACK.instance()
 	get_parent().add_child(swordAtk)
 	swordAtk.position = $Position2D.global_position
 	if direction == 1:
 		swordAtk.swordAttackRight()
-		$Attack/Attack.flip_h = false
-		$Attack.position.x = 16
-		$Attack/Attack.position.x = -15
+		directionAttack = false
+		swordAtkDirection()
+		AttackRightXPos = 16
+		AttackAttacRightkXPos = -15
+		
+		#$Attack/Attack.flip_h = false
+		#$Attack.position.x = 16
+		#$Attack/Attack.position.x = -15
 	else:
 		swordAtk.swordAttackLeft()
-		$Attack/Attack.flip_h = true
-		$Attack.position.x = -16
-		$Attack/Attack.position.x = 15
+		directionAttack = true
+		swordAtkDirection()
+		AttackRightXPos = -16
+		AttackAttacRightkXPos = 15
+		
+		
+		
+		#$Attack/Attack.flip_h = true
+		#$Attack.position.x = -16
+		#$Attack/Attack.position.x = 15
 func setStartValues():
 	$Attack/Attack.hide()
 	$Attack.disabled = true
