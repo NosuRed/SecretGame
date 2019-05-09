@@ -76,7 +76,7 @@ func setStartValues():
 	slideBool = false
 
 
-func charDead():
+func playerHP():
 	hitPoints +=1
 	if hitPoints == 10:
 		hitPoints = 0
@@ -84,12 +84,14 @@ func charDead():
 		print(lifePoints)
 		if lifePoints == 0:
 			isDead = true
-			if isDead:
-				motion = Vector2(0,0)
-				$CollisionShape2D/PlayerChar.play("Dead")
-				$CollisionShape2D.disabled = true
-				$Timer.start()
-		
+			playerDeath()
+
+func playerDeath():
+	if isDead:
+		motion = Vector2(0,0)
+		$CollisionShape2D/PlayerChar.play("Dead")
+		$CollisionShape2D.disabled = true
+		$Timer.start()
 
 func movementCharRight(InAir):
 	direction = 1
@@ -213,6 +215,6 @@ func dashPlayer():
 func checkPlEnemyCol():
 	for i in range(get_slide_count()):
 				if "Enemy" in get_slide_collision(i).collider.name:
-					charDead()
+					playerHP()
 
 
