@@ -198,19 +198,11 @@ func jumpUp(friction):
 		
 
 func dashPlayer():
-	if not DashCount:
-				#Dash to the left
-				if Input.is_action_just_pressed("ui_select") && $CollisionShape2D/PlayerChar.flip_h:
-					#Sets InAir to 1, this is so that we know we are in the air
-					#Sets DashCount to 1, to check if we dashed already
-					InAir = 1
-					DashCount = 1
-				#Dash to the Right
-				#Sets InAir to 1, this is so that we know we are in the air
-				#Sets DashCount to 1, to check if we dashed already
-				elif Input.is_action_just_pressed("ui_select") && not $CollisionShape2D/PlayerChar.flip_h:
-					InAir = 1
-					DashCount = 1
+	if Input.is_action_just_pressed("ui_select"):
+		if not DashCount:
+			InAir = 1
+			DashCount = 1 
+					
 
 func checkPlEnemyCol():
 	for i in range(get_slide_count()):
