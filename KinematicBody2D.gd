@@ -1,9 +1,10 @@
 extends KinematicBody2D
 const UP = Vector2(0,-1)
-const GRAVITY = 15
+const GRAVITY = 20
 const ACCELERATION = 50
 const MAX_SPEED = 150
 const JUMP_HEIGHT = -375
+const DOUBLE_JUMP_HEIGHT = -250
 const DASH_SPEED = 225
 const SWORDATTACK = preload("res://SwordAttack.tscn")
 
@@ -20,6 +21,7 @@ var InAir = 0
 var slideBool = false
 var AtkAllowed = true
 var direction = 1
+var doubleJump = true
 
 func hitBoxColl():
 	#Changes the collission of the Player when slieding
@@ -158,6 +160,7 @@ func _physics_process(delta):
 			#reset Dashcount and InAir
 			DashCount = 0
 			InAir = 0
+			doubleJump = true
 			if Input.is_action_just_pressed("ui_up"):
 				motion.y = JUMP_HEIGHT
 			if friction:
@@ -193,10 +196,15 @@ func _physics_process(delta):
 				motion.x = lerp(motion.x, 0, 0.05)
 				
 				
-				
+			if !InAir:
+				if Input.is_action_just_pressed("ui_up"):
+					if doubleJump:
+						motion.y = DOUBLE_JUMP_HEIGHT
+						$CollisionShape2D/PlayerChar.play("Double")
+						doubleJump = false
+			
 		motion = move_and_slide(motion,UP)
 	
-		
 		if get_slide_count() > 0:
 			for i in range(get_slide_count()):
 				if "Enemy" in get_slide_collision(i).collider.name:
