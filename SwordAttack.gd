@@ -20,4 +20,6 @@ func _on_Timer_timeout():
 
 func _on_SwordAttack_body_entered(body):
 	if "Enemy" in body.name:
+		print(body)
 		body.enemyHP()
+

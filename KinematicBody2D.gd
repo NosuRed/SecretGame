@@ -8,7 +8,6 @@ const DOUBLE_JUMP_HEIGHT = -250
 const DASH_SPEED = 225
 const SWORDATTACK = preload("res://SwordAttack.tscn")
 
-
 export(int) var lifePoints = 100
 onready var hpBar = $Bar/TextureProgress
 onready var hpLb = $Bar/TextureProgress/HP_Lb
@@ -129,6 +128,13 @@ func movementCharLeft(InAir):
 			$Slide/PlayerChar.set_flip_h(true)
 		else:
 			$CollisionShape2D/PlayerChar.play("Run")
+
+func playerHealed(healed):
+	lifePoints += healed
+	if lifePoints >= 100:
+		lifePoints = 100
+	
+
 func player_Hp_UpDate():
 	hpBar.set_value(lifePoints)
 	if lifePoints >= -1:

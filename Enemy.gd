@@ -10,7 +10,11 @@ export(int) var damageDone = 1
 var direction = -1
 var hitCounter = 0
 var isDead = false
-
+func playerRestoreHP():
+	print("test1")
+	
+func test():
+	print("test")
 func enemyDeath():
 		isDead = true
 		$CollisionShape2D2.disabled = true
