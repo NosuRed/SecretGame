@@ -8,7 +8,9 @@ const DASH_SPEED = 225
 const SWORDATTACK = preload("res://SwordAttack.tscn")
 
 
-export(int) var lifePoints = 10
+export(int) var lifePoints = 100
+onready var hpBar = $Bar/TextureProgress
+onready var hpLb = $Bar/TextureProgress/HP_Lb
 var hitPoints = 0
 var isDead = false
 var SLIDE_SPEED = 200
@@ -124,9 +126,16 @@ func movementCharLeft(InAir):
 			$Slide/PlayerChar.set_flip_h(true)
 		else:
 			$CollisionShape2D/PlayerChar.play("Run")
-
+func player_Hp_UpDate():
+	hpBar.set_value(lifePoints)
+	if lifePoints >= -1:
+		hpLb.set_text("HP: " + str(lifePoints))
+	else:
+		hpLb.set_text("0")
+	
 func _physics_process(delta):
-	get_node("Label").set_text(str(lifePoints))
+	player_Hp_UpDate()
+		
 	motion.y += GRAVITY
 	setStartValues()
 	var friction = false
