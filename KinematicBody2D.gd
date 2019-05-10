@@ -26,6 +26,7 @@ var displayDeathHP= "HP: 0"
 var checkPoint = CHECKPOINT.instance()
 var checkPointReached = false
 var checkPointPos
+
 func hitBoxColl():
 	#Changes the collission of the Player when slieding
 	# disables the Vertical hitbox
