@@ -7,6 +7,7 @@ const JUMP_HEIGHT = -375
 const DOUBLE_JUMP_HEIGHT = -250
 const DASH_SPEED = 225
 const SWORDATTACK = preload("res://SwordAttack.tscn")
+const CHECKPOINT = preload("res://CheckPoint/CheckPoint.tscn")
 
 export(int) var lifePoints = 100
 export(int) var MAX_HEALTH = 100
@@ -22,7 +23,9 @@ var slideBool = false
 var direction = 1
 var doubleJump = true
 var displayDeathHP= "HP: 0"
-
+var checkPoint = CHECKPOINT.instance()
+var checkPointReached = false
+var checkPointPos
 func hitBoxColl():
 	#Changes the collission of the Player when slieding
 	# disables the Vertical hitbox
@@ -51,7 +54,17 @@ func Attack():
 			attackAnimation()
 			
 
+func checkPointWasReached():
+	checkPointReached = true
 
+
+	
+func respawnPlayer(global):
+		if checkPointReached:
+			checkPointPos = global
+		 
+	
+	
 func leftRightAtk():
 	var swordAtk = SWORDATTACK.instance()
 	get_parent().add_child(swordAtk)
@@ -87,19 +100,26 @@ func playerHP(damage):
 	hitPoints = 0
 	lifePoints -=damage
 	if hpLb.get_text() == displayDeathHP:
-		print("Death")
-		print(lifePoints)
 		lifePoints = 0
 		$CollisionShape2D.disabled = true
 		playerDeath()
 
-func playerDeath():
-		isDead = true
-		motion = Vector2(0,0)
-		$CollisionShape2D/PlayerChar.play("Dead")
-		$CollisionShape2D.disabled = true
-		$Timer.start()
+func playerRespawnPos():
+		global_position.x = checkPointPos.x +70
+		global_position.y = checkPointPos.y + 60
+		lifePoints = 20
+	
 
+func playerDeath():
+		if !checkPointReached:
+			isDead = true
+			motion = Vector2(0,0)
+			$CollisionShape2D/PlayerChar.play("Dead")
+			$CollisionShape2D.disabled = true
+			$Timer.start()
+		else:
+			playerRespawnPos()
+			
 func movementCharRight(InAir):
 	direction = 1
 	if InAir:
@@ -146,6 +166,7 @@ func player_Hp_UpDate():
 		hpLb.set_text(displayDeathHP)
 
 func _physics_process(delta):
+		
 	player_Hp_UpDate()
 		
 	motion.y += GRAVITY
