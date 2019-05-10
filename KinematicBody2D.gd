@@ -9,6 +9,7 @@ const DASH_SPEED = 225
 const SWORDATTACK = preload("res://SwordAttack.tscn")
 
 export(int) var lifePoints = 100
+export(int) var MAX_HEALTH = 100
 onready var hpBar = $Bar/TextureProgress
 onready var hpLb = $Bar/TextureProgress/HP_Lb
 var hitPoints = 0
@@ -20,6 +21,7 @@ var InAir = 0
 var slideBool = false
 var direction = 1
 var doubleJump = true
+var displayDeathHP= "HP: 0"
 
 func hitBoxColl():
 	#Changes the collission of the Player when slieding
@@ -48,7 +50,6 @@ func Attack():
 			leftRightAtk()
 			attackAnimation()
 			
-var displayDeathHP= "HP: 0"
 
 
 func leftRightAtk():
@@ -86,6 +87,8 @@ func playerHP(damage):
 	hitPoints = 0
 	lifePoints -=damage
 	if hpLb.get_text() == displayDeathHP:
+		print("Death")
+		print(lifePoints)
 		lifePoints = 0
 		$CollisionShape2D.disabled = true
 		playerDeath()
@@ -131,8 +134,8 @@ func movementCharLeft(InAir):
 
 func playerHealed(healed):
 	lifePoints += healed
-	if lifePoints >= 100:
-		lifePoints = 100
+	if lifePoints >= MAX_HEALTH:
+		lifePoints = MAX_HEALTH
 	
 
 func player_Hp_UpDate():
