@@ -10,22 +10,22 @@ export(int) var damageDone = 1
 var direction = -1
 var hitCounter = 0
 var isDead = false
+
 func playerRestoreHP():
-	print("test1")
+	pass
 	
-func test():
-	print("test")
 func enemyDeath():
 		isDead = true
 		$CollisionShape2D2.disabled = true
 		velocity = Vector2(0,0)
-		$AnimatedSprite.play("dead")
+		$spritesheet.show()
+		$spritesheet/AnimationPlayer.play("DeathExplosion")
 		$Timer.start()
 	
 func enemyHP():
 	direction *= direction
 	hitCounter +=1
-	if hitCounter >= 15:
+	if hitCounter >= 5:
 		hitCounter = 0
 		lifePoints -=1
 	if lifePoints <= 0:
@@ -34,6 +34,7 @@ func enemyHP():
 	
 func _physics_process(delta):
 	if not isDead:
+		$spritesheet.hide()
 		velocity.x = max_speed * direction
 		$AnimatedSprite.play("walk")
 		if direction == 1:
@@ -67,3 +68,11 @@ func enemyColWithPlayer():
 				get_slide_collision(i).collider.playerHP(damageDone)
 				get_slide_collision(i).collider.bounceback()
 				
+
+
+func _on_AnimationPlayer_animation_started(anim_name):
+	pass # Replace with function body.
+
+
+func _on_AnimationPlayer_animation_finished(anim_name):
+	pass # Replace with function body.

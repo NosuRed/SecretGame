@@ -59,7 +59,6 @@ func attackAnimation():
 func Attack():
 	attackAnimation()
 	if $Attack/Attack.frame == 3:
-		print($Attack/Attack.frame)
 		leftRightAtk()
 
 			
