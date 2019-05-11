@@ -52,7 +52,6 @@ func attackAnimation():
 	else:
 		$Attack/Attack.flip_h = true
 	$Attack/Attack.show()
-	#$Attack.disabled = true
 	$CollisionShape2D/PlayerChar.hide()
 	$Slide/PlayerChar.hide()
 
@@ -80,14 +79,8 @@ func leftRightAtk():
 	swordAtk.position = $Position2D.global_position
 	if direction == 1:
 		swordAtk.swordAttackRight()
-		#$Attack/Attack.flip_h = false
-		$Attack.position.x = 16
-		$Attack/Attack.position.x = -15
 	else:
 		swordAtk.swordAttackLeft()
-		#$Attack/Attack.flip_h = true
-		$Attack.position.x = -16
-		$Attack/Attack.position.x = 15
 func setStartValues():
 	isAttacking = false
 	$Attack/Attack.hide()
@@ -119,7 +112,8 @@ func playerRespawnPos():
 		global_position.y = checkPointPos.y + 60
 		lifePoints = 20
 	
-
+func fastFallDown():
+	motion.y = -JUMP_HEIGHT
 func playerDeath():
 		if !checkPointReached:
 			isDead = true
@@ -183,6 +177,10 @@ func _physics_process(delta):
 	setStartValues()
 	var friction = false
 	if !isDead:
+		
+		if Input.is_action_just_pressed("ui_down"):
+			fastFallDown()
+		
 		if Input.is_action_just_released("ui_cancel"):
 				$Attack/Attack.frame = 0
 		

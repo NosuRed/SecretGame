@@ -7,6 +7,7 @@ var velocity = Vector2()
 export(int) var max_speed = 75
 export(int) var lifePoints = 1
 export(int) var damageDone = 1
+export(int) var lifePointsDivider = 5
 var direction = -1
 var hitCounter = 0
 var isDead = false
@@ -25,7 +26,7 @@ func enemyDeath():
 func enemyHP():
 	direction *= direction
 	hitCounter +=1
-	if hitCounter >= 5:
+	if hitCounter >= lifePointsDivider:
 		hitCounter = 0
 		lifePoints -=1
 	if lifePoints <= 0:
