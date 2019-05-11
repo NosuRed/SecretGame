@@ -26,8 +26,10 @@ var displayDeathHP= "HP: 0"
 var checkPoint = CHECKPOINT.instance()
 var checkPointReached = false
 var checkPointPos
+var isAttacking = false
 
 func hitBoxColl():
+	
 	#Changes the collission of the Player when slieding
 	# disables the Vertical hitbox
 	$CollisionShape2D.disabled = true 
@@ -39,20 +41,27 @@ func hitBoxColl():
 	$Slide/PlayerChar.show()
 	#to check if the Player is sliding
 	slideBool = true
+	
+func _on_Attack_animation_finished():
+	$Attack/Attack.frame = 0
+
 
 func attackAnimation():
-		$Attack/Attack.show()
-		$Attack/Attack.play("default")
-		$Attack.disabled = true
-		$CollisionShape2D/PlayerChar.hide()
-		$Slide/PlayerChar.hide()
+	if direction == 1:
+		$Attack/Attack.flip_h = false
+	else:
+		$Attack/Attack.flip_h = true
+	$Attack/Attack.show()
+	#$Attack.disabled = true
+	$CollisionShape2D/PlayerChar.hide()
+	$Slide/PlayerChar.hide()
 
 func Attack():
+	attackAnimation()
+	if $Attack/Attack.frame == 3:
+		print($Attack/Attack.frame)
+		leftRightAtk()
 
-	if Input.is_action_pressed("ui_cancel"):
-		if $Attack/Attack.get_frame() != 5 && $Attack/Attack.get_frame() != 0 && $Attack/Attack.get_frame() != 1:
-			leftRightAtk()
-			attackAnimation()
 			
 
 func checkPointWasReached():
@@ -72,15 +81,16 @@ func leftRightAtk():
 	swordAtk.position = $Position2D.global_position
 	if direction == 1:
 		swordAtk.swordAttackRight()
-		$Attack/Attack.flip_h = false
+		#$Attack/Attack.flip_h = false
 		$Attack.position.x = 16
 		$Attack/Attack.position.x = -15
 	else:
 		swordAtk.swordAttackLeft()
-		$Attack/Attack.flip_h = true
+		#$Attack/Attack.flip_h = true
 		$Attack.position.x = -16
 		$Attack/Attack.position.x = 15
 func setStartValues():
+	isAttacking = false
 	$Attack/Attack.hide()
 	$Attack.disabled = true
 	#Hides the Slide Sprot
@@ -174,7 +184,12 @@ func _physics_process(delta):
 	setStartValues()
 	var friction = false
 	if !isDead:
-		Attack()
+		if Input.is_action_just_released("ui_cancel"):
+				$Attack/Attack.frame = 0
+		
+		if Input.is_action_pressed("ui_cancel") && !isAttacking:
+			isAttacking = true
+			Attack()
 		
 		if Input.is_action_pressed("ui_right"):
 			movementCharRight(InAir)
@@ -255,4 +270,6 @@ func bounceback():
 	if !isDead:
 		motion.y = JUMP_HEIGHT
 		motion.x = MAX_SPEED
+
+
 
