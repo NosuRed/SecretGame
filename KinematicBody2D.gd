@@ -42,22 +42,23 @@ func hitBoxColl():
 	#to check if the Player is sliding
 	slideBool = true
 	
+	
 func _on_Attack_animation_finished():
 	$Attack/Attack.frame = 0
 
 
 func attackAnimation():
 	if direction == 1:
-		$Attack/Attack.flip_h = false
-	else:
 		$Attack/Attack.flip_h = true
+	else:
+		$Attack/Attack.flip_h = false
 	$Attack/Attack.show()
 	$CollisionShape2D/PlayerChar.hide()
 	$Slide/PlayerChar.hide()
 
 func Attack():
 	attackAnimation()
-	if $Attack/Attack.frame == 3:
+	if $Attack/Attack.frame == 4 or $Attack/Attack.frame == 8:
 		leftRightAtk()
 
 			
@@ -137,7 +138,7 @@ func movementCharRight(InAir):
 			motion.x = max(motion.x+ACCELERATION, +SLIDE_SPEED)
 			$Slide/PlayerChar.set_flip_h(false)
 		else:
-			$CollisionShape2D/PlayerChar.play("Run")
+			$CollisionShape2D/PlayerChar.play("KuroRun") #"Run"
 
 func movementCharLeft(InAir):
 	direction = -1
@@ -154,7 +155,7 @@ func movementCharLeft(InAir):
 			motion.x = max(motion.x-ACCELERATION, -SLIDE_SPEED)
 			$Slide/PlayerChar.set_flip_h(true)
 		else:
-			$CollisionShape2D/PlayerChar.play("Run")
+			$CollisionShape2D/PlayerChar.play("KuroRun") #"Run" 
 
 func playerHealed(healed):
 	lifePoints += healed
