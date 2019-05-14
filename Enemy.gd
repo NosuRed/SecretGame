@@ -32,16 +32,20 @@ func enemyHP():
 	if lifePoints <= 0:
 		enemyDeath()
 		
-	
+
+
+func enemyMovement():
+	$spritesheet.hide()
+	velocity.x = max_speed * direction
+	$AnimatedSprite.play("walk")
+	if direction == 1:
+		$AnimatedSprite.flip_h = true
+	else:
+		$AnimatedSprite.flip_h = false
+
 func _physics_process(delta):
 	if not isDead:
-		$spritesheet.hide()
-		velocity.x = max_speed * direction
-		$AnimatedSprite.play("walk")
-		if direction == 1:
-			$AnimatedSprite.flip_h = true
-		else:
-			$AnimatedSprite.flip_h = false
+		enemyMovement()
 			
 		velocity.y += GRAVITY
 	
@@ -50,12 +54,11 @@ func _physics_process(delta):
 		$CollisionShape2D2.disabled = true
 		
 	if is_on_wall():
-		direction = direction * -1
-		$RayCast2D.position.x *= -1
+		directionChange()
 	
 	if !$RayCast2D.is_colliding():
-		direction = direction * -1
-		$RayCast2D.position.x *= -1
+		directionChange()
+		
 	
 	if get_slide_count() > 0:
 		enemyColWithPlayer()
@@ -69,6 +72,11 @@ func enemyColWithPlayer():
 				get_slide_collision(i).collider.playerHP(damageDone)
 				get_slide_collision(i).collider.bounceback()
 				
+
+
+func directionChange():
+	direction = direction * -1
+	$RayCast2D.position.x *= -1
 
 
 func _on_AnimationPlayer_animation_started(anim_name):

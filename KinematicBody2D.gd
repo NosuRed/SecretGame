@@ -2,10 +2,11 @@ extends KinematicBody2D
 const UP = Vector2(0,-1)
 const GRAVITY = 20
 const ACCELERATION = 50
-const MAX_SPEED = 150
+const MAX_SPEED = 100
 const JUMP_HEIGHT = -375
 const DOUBLE_JUMP_HEIGHT = -250
 const DASH_SPEED = 225
+const SLIDE_SPEED = 175
 const SWORDATTACK = preload("res://SwordAttack.tscn")
 const CHECKPOINT = preload("res://CheckPoint/CheckPoint.tscn")
 
@@ -15,7 +16,7 @@ onready var hpBar = $Bar/TextureProgress
 onready var hpLb = $Bar/TextureProgress/HP_Lb
 var hitPoints = 0
 var isDead = false
-var SLIDE_SPEED = 200
+#var SLIDE_SPEED = 200
 var motion = Vector2()
 var DashCount = 0
 var InAir = 0
@@ -32,11 +33,11 @@ func hitBoxColl():
 	
 	#Changes the collission of the Player when slieding
 	# disables the Vertical hitbox
-	$CollisionShape2D.disabled = true 
+	#$CollisionShape2D.disabled = true 
 	#hides the PlayerChar Sprite that is not sliding
 	$CollisionShape2D/PlayerChar.hide()
 	#enables the slide hitbox
-	$Slide.disabled = false
+	#$Slide.disabled = false
 	#shows the slide sprite
 	$Slide/PlayerChar.show()
 	#to check if the Player is sliding
@@ -115,6 +116,7 @@ func playerRespawnPos():
 	
 func fastFallDown():
 	motion.y = -JUMP_HEIGHT
+	
 func playerDeath():
 		if !checkPointReached:
 			isDead = true
@@ -125,6 +127,7 @@ func playerDeath():
 		else:
 			playerRespawnPos()
 			
+
 func movementCharRight(InAir):
 	direction = 1
 	if InAir:
@@ -138,7 +141,7 @@ func movementCharRight(InAir):
 			motion.x = max(motion.x+ACCELERATION, +SLIDE_SPEED)
 			$Slide/PlayerChar.set_flip_h(false)
 		else:
-			$CollisionShape2D/PlayerChar.play("KuroRun") #"Run"
+			$CollisionShape2D/PlayerChar.play("KuroWalk") #"Run"
 
 func movementCharLeft(InAir):
 	direction = -1
@@ -153,9 +156,13 @@ func movementCharLeft(InAir):
 		if Input.is_action_pressed("ui_select"):
 			hitBoxColl()
 			motion.x = max(motion.x-ACCELERATION, -SLIDE_SPEED)
-			$Slide/PlayerChar.set_flip_h(true)
+			if !isAttacking:
+				$Slide/PlayerChar.play("KuroRun")
+				$Slide/PlayerChar.set_flip_h(true)
+			else:
+				$Slide/PlayerChar.hide()
 		else:
-			$CollisionShape2D/PlayerChar.play("KuroRun") #"Run" 
+			$CollisionShape2D/PlayerChar.play("KuroWalk") #"Run" 
 
 func playerHealed(healed):
 	lifePoints += healed
@@ -169,6 +176,12 @@ func player_Hp_UpDate():
 		hpLb.set_text("HP: " + str(lifePoints))
 	else:
 		hpLb.set_text(displayDeathHP)
+
+func _ready():
+	$Attack/Attack.frame = 0
+
+func kuroRun():
+	$CollisionShape2D/PlayerChar.play("KuroRun")
 
 func _physics_process(delta):
 		
